@@ -1318,8 +1318,11 @@ if (http_port)
 {
     if (!auth_token)
         throw new Error('Refusing to serve HTTP without AUTH_TOKEN env');
+    // Stateless: every request stands alone, so a redeploy or two
+    // overlapping containers never leave a client holding a dead session id.
     server.start({transportType: 'httpStream',
-        httpStream: {port: http_port, host: '0.0.0.0', endpoint: '/mcp'}});
+        httpStream: {port: http_port, host: '0.0.0.0', endpoint: '/mcp',
+            stateless: process.env.HTTP_STATELESS!=='false'}});
 }
 else
     server.start({transportType: 'stdio'});
