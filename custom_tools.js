@@ -342,9 +342,19 @@ export async function register_custom_tools({addTool, tool_fn, api_headers,
                 const dispatcher = new ProxyAgent({
                     uri: `http://${proxy_host}`, token,
                     requestTls: {rejectUnauthorized: false}});
-                const res = await proxy_fetch_impl(url, {method, headers,
-                    body: method=='POST' ? body : undefined, dispatcher,
-                    signal: AbortSignal.timeout(timeout_seconds*1000)});
+                let res;
+                try {
+                    res = await proxy_fetch_impl(url, {method, headers,
+                        body: method=='POST' ? body : undefined, dispatcher,
+                        signal: AbortSignal.timeout(timeout_seconds*1000)});
+                } catch(e){
+                    // undici hides the proxy's refusal (e.g. Bright Data
+                    // policy_20090 on blocked domains) in e.cause.
+                    const cause = e.cause?.message||e.message;
+                    throw new Error(`Proxy request failed: ${cause}. If the `
+                        +'proxy refused the domain (403), Bright Data blocks '
+                        +'it on residential IPs: use the unlocker tools.');
+                }
                 const text = method=='HEAD' ? '' : await res.text();
                 const keep = ['content-type', 'location', 'set-cookie',
                     'x-brd-error', 'x-brd-error-code', 'server'];
