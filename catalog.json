@@ -1,42 +1,247 @@
 {
-  "_about": "Scrapers and marketplace datasets this server exposes (Matt's core list, 2026-09-26). marketplace=true means Bright Data also sells pre-collected records that marketplace_filter can query. input is a hint only; Bright Data's error text names the exact fields when an input is wrong. The SCRAPERS env var (comma-separated dataset ids) narrows or extends this list without a rebuild.",
+  "_about": "Scrapers and marketplace datasets this server exposes (Matt's core list, 2026-09-26). marketplace=true means Bright Data also sells pre-collected records that marketplace_filter can query. input is a hint only; Bright Data's error text names the exact fields when an input is wrong. The SCRAPERS env var (comma-separated dataset ids) narrows or extends this list without a rebuild. collect=false means Bright Data refuses fresh runs (checked 2026-09-26 with an empty trigger: 'does not support collection'); those are marketplace-only. Removed that day for the same reason: Zillow Zestimate history, Zillow Discovery+PDP, Zillow discovered urls.",
   "scrapers": [
-    {"id": "gd_l1viktl72bvl7bjuj0", "site": "LinkedIn", "name": "People profiles", "marketplace": true, "input": "{url: linkedin.com/in/<handle>}"},
-    {"id": "gd_l1vikfnt1wgvvqz95w", "site": "LinkedIn", "name": "Company information", "marketplace": true, "input": "{url: linkedin.com/company/<slug>} (only /company/, /school/, /showcase/ URLs; one bad URL rejects the whole batch)"},
-    {"id": "gd_lpfll7v5hcqtkxl6l", "site": "LinkedIn", "name": "Job listings", "marketplace": false, "input": "{url: linkedin.com/jobs/view/<id>}"},
-    {"id": "gd_lyy3tktm25m4avu764", "site": "LinkedIn", "name": "Posts", "marketplace": false, "input": "{url: linkedin.com/posts/...}"},
-    {"id": "gd_me5ppxjr2ge6icjuh0", "site": "LinkedIn", "name": "People profiles with contact fields", "marketplace": false, "input": "{url: linkedin.com/in/<handle>}"},
-    {"id": "gd_m8d03he47z8nwb5xc", "site": "LinkedIn", "name": "People search", "marketplace": false, "input": "{url: linkedin.com people-search URL}"},
-    {"id": "gd_mfz5x93lmsjjjylob", "site": "Google", "name": "Search results (up to 100)", "marketplace": false, "input": "{url: 'https://www.google.com/', keyword, language: 'en', country: 'US', start_page: 1, end_page: 10}"},
-    {"id": "gd_mcswdt6z2elth3zqr2", "site": "Google", "name": "AI Mode answer", "marketplace": false, "input": "{url: 'https://www.google.com/search?udm=50&q=<q>', prompt, country: 'US'}"},
-    {"id": "gd_m8ebnr0q2qlklc02fz", "site": "Google", "name": "Maps business full information", "marketplace": false, "input": "{url: google.com/maps/place/...}; discover_by: cid {CID}, place_id {place_id}, location"},
-    {"id": "gd_luzfs1dn2oa0teb81", "site": "Google", "name": "Maps reviews", "marketplace": false, "input": "{url: google.com/maps/place/..., days_limit: 30}"},
-    {"id": "gd_lnsxoxzi1omrwnka5r", "site": "Google", "name": "News", "marketplace": false, "input": "unknown; try {url} or {keyword, country}"},
-    {"id": "gd_ltppk50q18kdw67omz", "site": "Google", "name": "Shopping product", "marketplace": false, "input": "{url: google shopping product URL}; discover_by: keyword {keyword, country}"},
-    {"id": "gd_m31f2k0d2m1bah4f3b", "site": "Google", "name": "Shopping search (US)", "marketplace": false, "input": "{url: 'https://www.google.com/search?tbm=shop&q=<q>'}"},
-    {"id": "gd_lsk382l8xei8vzm4u", "site": "Google", "name": "Play Store app", "marketplace": false, "input": "{url: play.google.com/store/apps/details?id=...}"},
-    {"id": "gd_mg3gjfmg12tc2n5d4d", "site": "Google", "name": "Hotels", "marketplace": false, "input": "{url, country}; discover_by: search {search_term, check_in_date, check_out_date, guest_number, country, currency}, filter_url"},
-    {"id": "gd_mhng7wen1rw0a3gvpf", "site": "Google", "name": "Flights", "marketplace": false, "input": "{url}; discover_by: input_filters {origin, destination, departure, return, trip_type, adults, cabin}"},
-    {"id": "gd_l4dx9j9sscpvs7no2", "site": "Indeed", "name": "Job listings", "marketplace": true, "input": "{url: indeed.com job URL}"},
-    {"id": "gd_l7qekxkv2i7ve6hx1s", "site": "Indeed", "name": "Companies", "marketplace": false, "input": "{url: indeed.com/cmp/<company>}"},
-    {"id": "gd_l1vik5c8204suup7nc", "site": "Glassdoor", "name": "Company information", "marketplace": true, "input": "{url: glassdoor.com company overview URL}"},
-    {"id": "gd_l7j1po0921hbu0ri1z", "site": "Glassdoor", "name": "Company reviews", "marketplace": true, "input": "{url: glassdoor.com reviews URL}"},
-    {"id": "gd_l7j0bx501ockwldaqf", "site": "Glassdoor", "name": "Company overview", "marketplace": true, "input": "{url: glassdoor.com overview URL}"},
-    {"id": "gd_lpfbbndm1xnopbrcr0", "site": "Glassdoor", "name": "Job listings", "marketplace": false, "input": "{url: glassdoor.com job URL}"},
-    {"id": "gd_m0ci4a4ivx3j5l6nx", "site": "ZoomInfo", "name": "Companies", "marketplace": false, "input": "{url: zoominfo.com/c/<name>/<id>}"},
-    {"id": "gd_m4ijiqfp2n9oe3oluj", "site": "PitchBook", "name": "Companies", "marketplace": false, "input": "{url: pitchbook.com/profiles/company/<id>}"},
-    {"id": "gd_m5zhkpdgryvlxn8zg", "site": "PitchBook", "name": "People", "marketplace": false, "input": "{url: pitchbook.com/profiles/person/<id>}"},
-    {"id": "gd_l1vijqt9jfj7olije", "site": "Crunchbase", "name": "Companies", "marketplace": true, "input": "{url: crunchbase.com/organization/<slug>}"},
-    {"id": "gd_mnx2txa59pcroghrl", "site": "Crunchbase", "name": "People", "marketplace": false, "input": "{url: crunchbase.com/person/<slug>}"},
-    {"id": "gd_l1vijqt9jfj8olije", "site": "G2", "name": "Products, reviews and alternatives", "marketplace": true, "input": "{url: g2.com/products/<slug>/reviews}"},
-    {"id": "gd_l88xvdka1uao86xvlb", "site": "G2", "name": "Product reviews", "marketplace": true, "input": "{url: g2.com/products/<slug>/reviews}"},
-    {"id": "gd_l88xp4k01qnhvyqlvw", "site": "G2", "name": "Product overview", "marketplace": true, "input": "{url: g2.com/products/<slug>}"},
-    {"id": "gd_m7dhdot1vw9a7gc1n", "site": "Perplexity", "name": "Answer", "marketplace": false, "input": "{url: 'https://www.perplexity.ai', prompt, index: '', country: ''}"},
-    {"id": "gd_mbz66arm2mf9cu856y", "site": "Gemini", "name": "Answer", "marketplace": false, "input": "{url: 'https://gemini.google.com/', prompt, index: 1}"},
-    {"id": "gd_lfqkr8wm13ixtbd8f5", "site": "Zillow", "name": "Property listing information", "marketplace": false, "input": "{url: zillow.com/homedetails/...}"},
-    {"id": "gd_lxu1cz9r88uiqsosl", "site": "Zillow", "name": "Price history", "marketplace": false, "input": "{url: zillow.com/homedetails/...}"},
-    {"id": "gd_lmhq4upd1rv58wndlm", "site": "Zillow", "name": "Zestimate history", "marketplace": false, "input": "{url: zillow.com/homedetails/...}"},
-    {"id": "gd_lnx91nvp1juvua4eo1", "site": "Zillow", "name": "Search then full listing details", "marketplace": false, "input": "{url: zillow.com search-results URL}"},
-    {"id": "gd_lfjxuicn2hl1lsl2kz", "site": "Zillow", "name": "Search then listing URLs only", "marketplace": false, "input": "{url: zillow.com search-results URL}"}
+    {
+      "id": "gd_l1viktl72bvl7bjuj0",
+      "site": "LinkedIn",
+      "name": "People profiles",
+      "marketplace": true,
+      "input": "{url: linkedin.com/in/<handle>}"
+    },
+    {
+      "id": "gd_l1vikfnt1wgvvqz95w",
+      "site": "LinkedIn",
+      "name": "Company information",
+      "marketplace": true,
+      "input": "{url: linkedin.com/company/<slug>} (only /company/, /school/, /showcase/ URLs; one bad URL rejects the whole batch)"
+    },
+    {
+      "id": "gd_lpfll7v5hcqtkxl6l",
+      "site": "LinkedIn",
+      "name": "Job listings",
+      "marketplace": false,
+      "input": "{url: linkedin.com/jobs/view/<id>}"
+    },
+    {
+      "id": "gd_lyy3tktm25m4avu764",
+      "site": "LinkedIn",
+      "name": "Posts",
+      "marketplace": false,
+      "input": "{url: linkedin.com/posts/...}"
+    },
+    {
+      "id": "gd_me5ppxjr2ge6icjuh0",
+      "site": "LinkedIn",
+      "name": "People profiles with contact fields",
+      "marketplace": true,
+      "input": "not scrapable fresh (Bright Data: 'does not support collection'); use marketplace_filter",
+      "collect": false
+    },
+    {
+      "id": "gd_m8d03he47z8nwb5xc",
+      "site": "LinkedIn",
+      "name": "People search",
+      "marketplace": false,
+      "input": "{url: linkedin.com people-search URL}"
+    },
+    {
+      "id": "gd_mfz5x93lmsjjjylob",
+      "site": "Google",
+      "name": "Search results (up to 100)",
+      "marketplace": false,
+      "input": "{url: 'https://www.google.com/', keyword, language: 'en', country: 'US', start_page: 1, end_page: 10}"
+    },
+    {
+      "id": "gd_mcswdt6z2elth3zqr2",
+      "site": "Google",
+      "name": "AI Mode answer",
+      "marketplace": false,
+      "input": "{url: 'https://www.google.com/search?udm=50&q=<q>', prompt, country: 'US'}"
+    },
+    {
+      "id": "gd_m8ebnr0q2qlklc02fz",
+      "site": "Google",
+      "name": "Maps business full information",
+      "marketplace": false,
+      "input": "{url: google.com/maps/place/...}; discover_by: cid {CID}, place_id {place_id}, location"
+    },
+    {
+      "id": "gd_luzfs1dn2oa0teb81",
+      "site": "Google",
+      "name": "Maps reviews",
+      "marketplace": false,
+      "input": "{url: google.com/maps/place/..., days_limit: 30}"
+    },
+    {
+      "id": "gd_lnsxoxzi1omrwnka5r",
+      "site": "Google",
+      "name": "News",
+      "marketplace": false,
+      "input": "unknown; try {url} or {keyword, country}"
+    },
+    {
+      "id": "gd_ltppk50q18kdw67omz",
+      "site": "Google",
+      "name": "Shopping product",
+      "marketplace": false,
+      "input": "{url: google shopping product URL}; discover_by: keyword {keyword, country}"
+    },
+    {
+      "id": "gd_m31f2k0d2m1bah4f3b",
+      "site": "Google",
+      "name": "Shopping search (US)",
+      "marketplace": false,
+      "input": "{url: 'https://www.google.com/search?tbm=shop&q=<q>'}"
+    },
+    {
+      "id": "gd_lsk382l8xei8vzm4u",
+      "site": "Google",
+      "name": "Play Store app",
+      "marketplace": false,
+      "input": "{url: play.google.com/store/apps/details?id=...}"
+    },
+    {
+      "id": "gd_mg3gjfmg12tc2n5d4d",
+      "site": "Google",
+      "name": "Hotels",
+      "marketplace": false,
+      "input": "{url, country}; discover_by: search {search_term, check_in_date, check_out_date, guest_number, country, currency}, filter_url"
+    },
+    {
+      "id": "gd_mhng7wen1rw0a3gvpf",
+      "site": "Google",
+      "name": "Flights",
+      "marketplace": false,
+      "input": "{url}; discover_by: input_filters {origin, destination, departure, return, trip_type, adults, cabin}"
+    },
+    {
+      "id": "gd_l4dx9j9sscpvs7no2",
+      "site": "Indeed",
+      "name": "Job listings",
+      "marketplace": true,
+      "input": "{url: indeed.com job URL}"
+    },
+    {
+      "id": "gd_l7qekxkv2i7ve6hx1s",
+      "site": "Indeed",
+      "name": "Companies",
+      "marketplace": false,
+      "input": "{url: indeed.com/cmp/<company>}"
+    },
+    {
+      "id": "gd_l1vik5c8204suup7nc",
+      "site": "Glassdoor",
+      "name": "Company information",
+      "marketplace": true,
+      "input": "not scrapable fresh (Bright Data: 'does not support collection'); use marketplace_filter",
+      "collect": false
+    },
+    {
+      "id": "gd_l7j1po0921hbu0ri1z",
+      "site": "Glassdoor",
+      "name": "Company reviews",
+      "marketplace": true,
+      "input": "{url: glassdoor.com reviews URL}"
+    },
+    {
+      "id": "gd_l7j0bx501ockwldaqf",
+      "site": "Glassdoor",
+      "name": "Company overview",
+      "marketplace": true,
+      "input": "{url: glassdoor.com overview URL}"
+    },
+    {
+      "id": "gd_lpfbbndm1xnopbrcr0",
+      "site": "Glassdoor",
+      "name": "Job listings",
+      "marketplace": false,
+      "input": "{url: glassdoor.com job URL}"
+    },
+    {
+      "id": "gd_m0ci4a4ivx3j5l6nx",
+      "site": "ZoomInfo",
+      "name": "Companies",
+      "marketplace": false,
+      "input": "{url: zoominfo.com/c/<name>/<id>}"
+    },
+    {
+      "id": "gd_m4ijiqfp2n9oe3oluj",
+      "site": "PitchBook",
+      "name": "Companies",
+      "marketplace": false,
+      "input": "{url: pitchbook.com/profiles/company/<id>}"
+    },
+    {
+      "id": "gd_m5zhkpdgryvlxn8zg",
+      "site": "PitchBook",
+      "name": "People",
+      "marketplace": false,
+      "input": "{url: pitchbook.com/profiles/person/<id>}"
+    },
+    {
+      "id": "gd_l1vijqt9jfj7olije",
+      "site": "Crunchbase",
+      "name": "Companies",
+      "marketplace": true,
+      "input": "{url: crunchbase.com/organization/<slug>}"
+    },
+    {
+      "id": "gd_mnx2txa59pcroghrl",
+      "site": "Crunchbase",
+      "name": "People",
+      "marketplace": false,
+      "input": "{url: crunchbase.com/person/<slug>}"
+    },
+    {
+      "id": "gd_l1vijqt9jfj8olije",
+      "site": "G2",
+      "name": "Products, reviews and alternatives",
+      "marketplace": true,
+      "input": "not scrapable fresh (Bright Data: 'does not support collection'); use marketplace_filter",
+      "collect": false
+    },
+    {
+      "id": "gd_l88xvdka1uao86xvlb",
+      "site": "G2",
+      "name": "Product reviews",
+      "marketplace": true,
+      "input": "{url: g2.com/products/<slug>/reviews}"
+    },
+    {
+      "id": "gd_l88xp4k01qnhvyqlvw",
+      "site": "G2",
+      "name": "Product overview",
+      "marketplace": true,
+      "input": "not scrapable fresh (Bright Data: 'does not support collection'); use marketplace_filter",
+      "collect": false
+    },
+    {
+      "id": "gd_m7dhdot1vw9a7gc1n",
+      "site": "Perplexity",
+      "name": "Answer",
+      "marketplace": false,
+      "input": "{url: 'https://www.perplexity.ai', prompt, index: '', country: ''}"
+    },
+    {
+      "id": "gd_mbz66arm2mf9cu856y",
+      "site": "Gemini",
+      "name": "Answer",
+      "marketplace": false,
+      "input": "{url: 'https://gemini.google.com/', prompt, index: 1}"
+    },
+    {
+      "id": "gd_lfqkr8wm13ixtbd8f5",
+      "site": "Zillow",
+      "name": "Property listing information (also search pages)",
+      "marketplace": false,
+      "input": "{url: zillow.com/homedetails/...}; or a zillow.com search-results URL with discover_by: url and a small limit_per_input"
+    },
+    {
+      "id": "gd_lxu1cz9r88uiqsosl",
+      "site": "Zillow",
+      "name": "Price history",
+      "marketplace": false,
+      "input": "{url: zillow.com/homedetails/...}"
+    }
   ]
 }

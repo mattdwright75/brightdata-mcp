@@ -116,9 +116,11 @@ export async function register_custom_tools({addTool, tool_fn, api_headers,
     unlocker_zone})
 {
     const scrapers = build_scraper_list();
-    const scraper_ids = scrapers.map(s=>s.id);
+    // collect=false: Bright Data refuses fresh runs; marketplace only.
+    const runnable = scrapers.filter(s=>s.collect!==false);
+    const scraper_ids = runnable.map(s=>s.id);
     const marketplace_ids = scrapers.filter(s=>s.marketplace).map(s=>s.id);
-    const scraper_lines = scrapers.map(s=>`- ${s.id}: ${s.site} ${s.name}`
+    const scraper_lines = runnable.map(s=>`- ${s.id}: ${s.site} ${s.name}`
         +(s.marketplace ? ' (marketplace)' : '')).join('\n');
 
     addTool({
@@ -152,16 +154,21 @@ export async function register_custom_tools({addTool, tool_fn, api_headers,
                 .describe('Discovery mode (e.g. keyword, location, '
                     +'place_id) for scrapers that find items by criteria '
                     +'instead of by URL'),
+            limit_per_input: z.number().int().min(1).max(1000).optional()
+                .describe('With discover_by: max records per input (each '
+                    +'record is billed)'),
             wait_seconds: z.number().int().min(0).max(600).optional()
                 .default(120),
         }).strict(),
         execute: tool_fn('run_scraper', async({scraper_id, inputs,
-            discover_by, wait_seconds}, ctx)=>
+            discover_by, limit_per_input, wait_seconds}, ctx)=>
         {
             const headers = api_headers(ctx.clientName, 'run_scraper');
             const params = {dataset_id: scraper_id, include_errors: true};
             if (discover_by)
                 Object.assign(params, {type: 'discover_new', discover_by});
+            if (limit_per_input)
+                params.limit_per_input = limit_per_input;
             const trigger = await axios({url: `${API}/datasets/v3/trigger`,
                 params, method: 'POST', data: inputs,
                 headers: {...headers, 'Content-Type': 'application/json'}});

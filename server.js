@@ -198,6 +198,9 @@ let server = new FastMCP({
     name: 'Bright Data',
     version: package_json.version,
     health: {enabled: true, path: '/health', message: 'ok'},
+    // No roots: stateless HTTP has no channel for the server to ask the
+    // client, so the request only timed out and logged errors.
+    roots: {enabled: false},
     ...auth_token ? {authenticate: request=>{
         if (request.headers.authorization!==`Bearer ${auth_token}`)
             throw new Response(null, {status: 401,
