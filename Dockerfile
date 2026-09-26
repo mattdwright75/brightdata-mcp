@@ -11,6 +11,9 @@ FROM node:22-alpine AS release
 
 WORKDIR /app
 
+# Coolify's health check calls curl; busybox wget tries ::1 only and fails.
+RUN apk add --no-cache curl
+
 
 COPY --from=builder /app/*.js /app/
 COPY --from=builder /app/catalog.json /app/
