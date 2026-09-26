@@ -11,6 +11,8 @@ import {dataset_id_schema, filter_schema, metadata_to_fields, FILTER_OPERATORS}
     from './search_dataset_schema.js';
 import {createRequire} from 'node:module';
 import {remark} from 'remark';
+import {register_custom_tools, unlock_params, unlock_body}
+    from './custom_tools.js';
 import strip from 'strip-markdown';
 const require = createRequire(import.meta.url);
 const package_json = require('./package.json');
@@ -191,9 +193,17 @@ async function ensure_required_zones(){
 
 await ensure_required_zones();
 
+const auth_token = process.env.AUTH_TOKEN;
 let server = new FastMCP({
     name: 'Bright Data',
     version: package_json.version,
+    health: {enabled: true, path: '/health', message: 'ok'},
+    ...auth_token ? {authenticate: request=>{
+        if (request.headers.authorization!==`Bearer ${auth_token}`)
+            throw new Response(null, {status: 401,
+                statusText: 'Unauthorized'});
+        return {id: 'bearer'};
+    }} : {},
 });
 let debug_stats = {tool_calls: {}, session_calls: 0, call_timestamps: []};
 
@@ -274,8 +284,8 @@ addTool({
         readOnlyHint: true,
         openWorldHint: true,
     },
-    parameters: z.object({url: z.string().url()}),
-    execute: tool_fn('scrape_as_markdown', async({url}, ctx)=>{
+    parameters: z.object({url: z.string().url(), ...unlock_params}),
+    execute: tool_fn('scrape_as_markdown', async({url, ...opts}, ctx)=>{
         let response = await base_request({
             url: 'https://api.brightdata.com/request',
             method: 'POST',
@@ -284,6 +294,7 @@ addTool({
                 zone: unlocker_zone,
                 format: 'raw',
                 data_format: 'markdown',
+                ...unlock_body(opts),
             },
             headers: api_headers(ctx.clientName, 'scrape_as_markdown'),
             responseType: 'text',
@@ -384,9 +395,10 @@ addTool({
        openWorldHint: true,
    },
    parameters: z.object({
-       urls: z.array(z.string().url()).min(1).max(5).describe('Array of URLs to scrape (max 5)')
+       urls: z.array(z.string().url()).min(1).max(5).describe('Array of URLs to scrape (max 5)'),
+       ...unlock_params,
    }),
-   execute: tool_fn('scrape_batch', async ({urls}, ctx)=>{
+   execute: tool_fn('scrape_batch', async ({urls, ...opts}, ctx)=>{
        const scrapePromises = urls.map(url =>
            base_request({
                url: 'https://api.brightdata.com/request',
@@ -396,6 +408,7 @@ addTool({
                    zone: unlocker_zone,
                    format: 'raw',
                    data_format: 'markdown',
+                   ...unlock_body(opts),
                },
                headers: api_headers(ctx.clientName, 'scrape_batch'),
                responseType: 'text',
@@ -427,8 +440,8 @@ addTool({
         readOnlyHint: true,
         openWorldHint: true,
     },
-    parameters: z.object({url: z.string().url()}),
-    execute: tool_fn('scrape_as_html', async({url}, ctx)=>{
+    parameters: z.object({url: z.string().url(), ...unlock_params}),
+    execute: tool_fn('scrape_as_html', async({url, ...opts}, ctx)=>{
         let response = await axios({
             url: 'https://api.brightdata.com/request',
             method: 'POST',
@@ -436,6 +449,7 @@ addTool({
                 url,
                 zone: unlocker_zone,
                 format: 'raw',
+                ...unlock_body(opts),
             },
             headers: api_headers(ctx.clientName, 'scrape_as_html'),
             responseType: 'text',
@@ -1306,6 +1320,8 @@ for (let {dataset_id, id, description, inputs, defaults = {},
 
 server.addPrompts(prompts);
 
+await register_custom_tools({addTool, tool_fn, api_headers, unlocker_zone});
+
 for (let tool of browser_tools)
     addTool(tool);
 
@@ -1318,7 +1334,16 @@ server.on('connect', (event)=>{
         global.mcpClientInfo = clientInfo;
 });
 
-server.start({transportType: 'stdio'});
+const http_port = parseInt(process.env.PORT||'0', 10);
+if (http_port)
+{
+    if (!auth_token)
+        throw new Error('Refusing to serve HTTP without AUTH_TOKEN env');
+    server.start({transportType: 'httpStream',
+        httpStream: {port: http_port, host: '0.0.0.0', endpoint: '/mcp'}});
+}
+else
+    server.start({transportType: 'stdio'});
 function tool_fn(name, fn){
     return async(data, ctx)=>{
         check_rate_limit();
