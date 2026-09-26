@@ -11,8 +11,8 @@ import {dataset_id_schema, filter_schema, metadata_to_fields, FILTER_OPERATORS}
     from './search_dataset_schema.js';
 import {createRequire} from 'node:module';
 import {remark} from 'remark';
-import {register_custom_tools, unlock_params, unlock_body}
-    from './custom_tools.js';
+import {register_custom_tools, unlock_params, unlock_body,
+    extract_json} from './custom_tools.js';
 import strip from 'strip-markdown';
 const require = createRequire(import.meta.url);
 const package_json = require('./package.json');
@@ -461,9 +461,10 @@ addTool({
 addTool({
     name: 'extract',
     description: 'Scrape a webpage and extract structured data as JSON. '
-        + 'First scrapes the page as markdown, then uses AI sampling to convert '
-        + 'it to structured JSON format. This tool can unlock any webpage even '
-        + 'if it uses bot detection or CAPTCHA.',
+        + 'Scrapes the page as markdown through the Web Unlocker, then Claude '
+        + 'turns it into JSON (facts from the page only; null for missing '
+        + 'fields). This tool can unlock any webpage even if it uses bot '
+        + 'detection or CAPTCHA.',
     annotations: {
         title: 'Extract Structured Data',
         readOnlyHint: true,
@@ -471,13 +472,16 @@ addTool({
     },
     parameters: z.object({
         url: z.string().url(),
-        extraction_prompt: z.string().optional().describe(
-            'Custom prompt to guide the extraction process. If not provided, '
-            + 'will extract general structured data from the page.'
+        extraction_prompt: z.string().max(4000).optional().describe(
+            'What to extract, e.g. "company name, CEO, HQ city" or "list of '
+            + 'jobs with title and location". If not provided, extracts the '
+            + 'page main entity.'
         ),
+        ...unlock_params,
     }),
-    execute: tool_fn('extract', async ({ url, extraction_prompt }, ctx) => {
-        let scrape_response = await axios({
+    execute: tool_fn('extract', async ({ url, extraction_prompt, ...opts },
+        ctx) => {
+        let scrape_response = await base_request({
             url: 'https://api.brightdata.com/request',
             method: 'POST',
             data: {
@@ -485,38 +489,13 @@ addTool({
                 zone: unlocker_zone,
                 format: 'raw',
                 data_format: 'markdown',
+                ...unlock_body(opts),
             },
             headers: api_headers(ctx.clientName, 'extract'),
             responseType: 'text',
         });
-
-        let markdown_content = scrape_response.data;
-
-        let system_prompt = 'You are a data extraction specialist. You MUST respond with ONLY valid JSON, no other text or formatting. '
-            + 'Extract the requested information from the markdown content and return it as a properly formatted JSON object. '
-            + 'Do not include any explanations, markdown formatting, or text outside the JSON response.';
-
-        let user_prompt = extraction_prompt ||
-            'Extract the requested information from this markdown content and return ONLY a JSON object:';
-
-        let session = server.sessions[0]; // Get the first active session
-        if (!session) throw new Error('No active session available for sampling');
-
-        let sampling_response = await session.requestSampling({
-            messages: [
-                {
-                    role: "user",
-                    content: {
-                        type: "text",
-                        text: `${user_prompt}\n\nMarkdown content:\n${markdown_content}\n\nRemember: Respond with ONLY valid JSON, no other text.`,
-                    },
-                },
-            ],
-            systemPrompt: system_prompt,
-            includeContext: "thisServer",
-        });
-
-        return sampling_response.content.text;
+        return await extract_json({markdown: String(scrape_response.data||''),
+            extraction_prompt, url});
     }),
 });
 

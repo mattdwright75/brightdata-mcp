@@ -25,6 +25,7 @@
     },
     "license": "MIT",
     "dependencies": {
+        "@anthropic-ai/sdk": "^0.128.0",
         "@modelcontextprotocol/sdk": "1.21.2",
         "axios": "^1.11.0",
         "fastmcp": "^3.33.0",
