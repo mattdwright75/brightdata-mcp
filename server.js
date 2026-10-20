@@ -13,6 +13,7 @@ import {createRequire} from 'node:module';
 import {remark} from 'remark';
 import {register_custom_tools, unlock_params, unlock_body,
     extract_json} from './custom_tools.js';
+import {register_business_search} from './business_search.js';
 import strip from 'strip-markdown';
 const require = createRequire(import.meta.url);
 const package_json = require('./package.json');
@@ -1303,6 +1304,7 @@ for (let {dataset_id, id, description, inputs, defaults = {},
 server.addPrompts(prompts);
 
 await register_custom_tools({addTool, tool_fn, api_headers, unlocker_zone});
+register_business_search({addTool, tool_fn, api_headers});
 
 for (let tool of browser_tools)
     addTool(tool);
