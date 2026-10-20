@@ -130,30 +130,6 @@
       "input": "{url: crunchbase.com/person/<slug>}"
     },
     {
-      "id": "gd_l1vijqt9jfj8olije",
-      "site": "G2",
-      "name": "Products, reviews and alternatives",
-      "marketplace": true,
-      "input": "not scrapable fresh (Bright Data: 'does not support collection'); use marketplace_filter",
-      "collect": false
-    },
-    {
-      "id": "gd_l88xvdka1uao86xvlb",
-      "site": "G2",
-      "name": "Product reviews",
-      "marketplace": true,
-      "input": "fresh runs switched off 2026-10-20 (Matt); stored records only, use marketplace_filter",
-      "collect": false
-    },
-    {
-      "id": "gd_l88xp4k01qnhvyqlvw",
-      "site": "G2",
-      "name": "Product overview",
-      "marketplace": true,
-      "input": "not scrapable fresh (Bright Data: 'does not support collection'); use marketplace_filter",
-      "collect": false
-    },
-    {
       "id": "gd_lfqkr8wm13ixtbd8f5",
       "site": "Zillow",
       "name": "Property listing information (also search pages)",
