@@ -142,7 +142,8 @@
       "site": "G2",
       "name": "Product reviews",
       "marketplace": true,
-      "input": "{url: g2.com/products/<slug>/reviews}"
+      "input": "fresh runs switched off 2026-10-20 (Matt); stored records only, use marketplace_filter",
+      "collect": false
     },
     {
       "id": "gd_l88xp4k01qnhvyqlvw",
@@ -151,20 +152,6 @@
       "marketplace": true,
       "input": "not scrapable fresh (Bright Data: 'does not support collection'); use marketplace_filter",
       "collect": false
-    },
-    {
-      "id": "gd_m7dhdot1vw9a7gc1n",
-      "site": "Perplexity",
-      "name": "Answer",
-      "marketplace": false,
-      "input": "{url: 'https://www.perplexity.ai', prompt, index: '', country: ''}"
-    },
-    {
-      "id": "gd_mbz66arm2mf9cu856y",
-      "site": "Gemini",
-      "name": "Answer",
-      "marketplace": false,
-      "input": "{url: 'https://gemini.google.com/', prompt, index: 1}"
     },
     {
       "id": "gd_lfqkr8wm13ixtbd8f5",
