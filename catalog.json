@@ -23,13 +23,6 @@
       "input": "{url: linkedin.com/jobs/view/<id>}"
     },
     {
-      "id": "gd_lyy3tktm25m4avu764",
-      "site": "LinkedIn",
-      "name": "Posts",
-      "marketplace": false,
-      "input": "{url: linkedin.com/posts/...}"
-    },
-    {
       "id": "gd_me5ppxjr2ge6icjuh0",
       "site": "LinkedIn",
       "name": "People profiles with contact fields",
