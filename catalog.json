@@ -52,69 +52,6 @@
       "input": "{url: 'https://www.google.com/', keyword, language: 'en', country: 'US', start_page: 1, end_page: 10}"
     },
     {
-      "id": "gd_mcswdt6z2elth3zqr2",
-      "site": "Google",
-      "name": "AI Mode answer",
-      "marketplace": false,
-      "input": "{url: 'https://www.google.com/search?udm=50&q=<q>', prompt, country: 'US'}"
-    },
-    {
-      "id": "gd_m8ebnr0q2qlklc02fz",
-      "site": "Google",
-      "name": "Maps business full information",
-      "marketplace": false,
-      "input": "{url: google.com/maps/place/...}; discover_by: cid {CID}, place_id {place_id}, location"
-    },
-    {
-      "id": "gd_luzfs1dn2oa0teb81",
-      "site": "Google",
-      "name": "Maps reviews",
-      "marketplace": false,
-      "input": "{url: google.com/maps/place/..., days_limit: 30}"
-    },
-    {
-      "id": "gd_lnsxoxzi1omrwnka5r",
-      "site": "Google",
-      "name": "News",
-      "marketplace": false,
-      "input": "unknown; try {url} or {keyword, country}"
-    },
-    {
-      "id": "gd_ltppk50q18kdw67omz",
-      "site": "Google",
-      "name": "Shopping product",
-      "marketplace": false,
-      "input": "{url: google shopping product URL}; discover_by: keyword {keyword, country}"
-    },
-    {
-      "id": "gd_m31f2k0d2m1bah4f3b",
-      "site": "Google",
-      "name": "Shopping search (US)",
-      "marketplace": false,
-      "input": "{url: 'https://www.google.com/search?tbm=shop&q=<q>'}"
-    },
-    {
-      "id": "gd_lsk382l8xei8vzm4u",
-      "site": "Google",
-      "name": "Play Store app",
-      "marketplace": false,
-      "input": "{url: play.google.com/store/apps/details?id=...}"
-    },
-    {
-      "id": "gd_mg3gjfmg12tc2n5d4d",
-      "site": "Google",
-      "name": "Hotels",
-      "marketplace": false,
-      "input": "{url, country}; discover_by: search {search_term, check_in_date, check_out_date, guest_number, country, currency}, filter_url"
-    },
-    {
-      "id": "gd_mhng7wen1rw0a3gvpf",
-      "site": "Google",
-      "name": "Flights",
-      "marketplace": false,
-      "input": "{url}; discover_by: input_filters {origin, destination, departure, return, trip_type, adults, cabin}"
-    },
-    {
       "id": "gd_l4dx9j9sscpvs7no2",
       "site": "Indeed",
       "name": "Job listings",
