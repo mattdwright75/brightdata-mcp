@@ -242,6 +242,14 @@
       "name": "Price history",
       "marketplace": false,
       "input": "{url: zillow.com/homedetails/...}"
+    },
+    {
+      "id": "gd_m3fl0mwzmfpfn4cw4",
+      "site": "Merged companies",
+      "name": "Companies information enriched (LinkedIn _lc, Owler _ow, Crunchbase _cb, Indeed _in, ZoomInfo _zi, Glassdoor _gd in one record)",
+      "marketplace": true,
+      "input": "not scrapable fresh; use marketplace_filter. Look up by LinkedIn id_lc (the /company/<slug>), never by domain (one domain returns many regional pages). employees_zi and total_employees_zi are ZoomInfo staff bands with punctuation stripped (51200 = 51-200), not counts; revenue_zi is US dollars and 5000000 means no figure; revenue_ow 0 means none.",
+      "collect": false
     }
   ]
 }

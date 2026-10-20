@@ -122,6 +122,11 @@ export async function register_custom_tools({addTool, tool_fn, api_headers,
     const marketplace_ids = scrapers.filter(s=>s.marketplace).map(s=>s.id);
     const scraper_lines = runnable.map(s=>`- ${s.id}: ${s.site} ${s.name}`
         +(s.marketplace ? ' (marketplace)' : '')).join('\n');
+    // Marketplace-only entries carry their lookup hint; the rest only a name.
+    const marketplace_lines = scrapers.filter(s=>s.marketplace)
+        .map(s=>`- ${s.id}: ${s.site} ${s.name}`
+            +(s.collect===false && s.input ? `. ${s.input}` : ''))
+        .join('\n');
 
     addTool({
         name: 'list_scrapers',
@@ -217,7 +222,7 @@ export async function register_custom_tools({addTool, tool_fn, api_headers,
             name: 'marketplace_fields',
             description: 'List the filterable fields of a Bright Data '
                 +'marketplace dataset (records already collected). Call '
-                +'before marketplace_filter.',
+                +'before marketplace_filter. Datasets:\n'+marketplace_lines,
             annotations: {title: 'Marketplace Fields', readOnlyHint: true,
                 openWorldHint: true},
             parameters: z.object({dataset_id: z.enum(marketplace_ids)})
@@ -240,8 +245,10 @@ export async function register_custom_tools({addTool, tool_fn, api_headers,
                 +'marketplace dataset that match a filter (no fresh scrape). '
                 +'COSTS MONEY per record: keep records_limit small. Match '
                 +'companies by exact website "https://www.<domain>/" with =, '
-                +'not includes. Max 4 rules per group, 3 levels deep. Leaf '
-                +'operators: '+FILTER_OPERATORS.join(', ')+'.',
+                +'not includes (merged companies dataset: by id_lc instead). '
+                +'Max 4 rules per group, 3 levels deep. Leaf '
+                +'operators: '+FILTER_OPERATORS.join(', ')+'.\nDatasets:\n'
+                +marketplace_lines,
             annotations: {title: 'Marketplace Filter', readOnlyHint: false,
                 openWorldHint: true},
             parameters: z.object({
